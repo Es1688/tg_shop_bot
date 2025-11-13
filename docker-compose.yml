@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: shop-telegram-bot
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - YANDEX_API_KEY=${YANDEX_API_KEY}
+      - YANDEX_FOLDER_ID=${YANDEX_FOLDER_ID}
+      - USE_YANDEX_GPT=True
+      - USE_OLLAMA=False
+      - DATABASE_URL=/app/data/shop_bot.db
+      - LOG_LEVEL=INFO
+    volumes:
+      - bot_data:/app/data
+      - bot_logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sqlite3; conn = sqlite3.connect('/app/data/shop_bot.db'); conn.close()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  bot_data:
+  bot_logs:
