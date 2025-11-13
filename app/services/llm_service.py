@@ -11,18 +11,26 @@ class LLMService:
         self.use_ollama = config.USE_OLLAMA
         
         # Проверяем конфигурацию
-        if self.use_yandex_gpt and not config.YANDEX_API_KEY:
-            logger.warning("YANDEX_API_KEY not set, but USE_YANDEX_GPT is True")
+        if self.use_yandex_gpt:
+            if not config.YANDEX_API_KEY:
+                logger.warning("YANDEX_API_KEY not set, but USE_YANDEX_GPT is True")
+            if not config.YANDEX_FOLDER_ID:
+                logger.warning("YANDEX_FOLDER_ID not set, but USE_YANDEX_GPT is True")
     
     async def get_ai_response(self, user_id: int, user_message: str) -> str:
         """Получение ответа от выбранного AI провайдера"""
         
-        if self.use_yandex_gpt and config.YANDEX_API_KEY:
-            return await yandex_gpt_service.get_ai_response(user_id, user_message)
+        if self.use_yandex_gpt and config.YANDEX_API_KEY and config.YANDEX_FOLDER_ID:
+            try:
+                return await yandex_gpt_service.get_ai_response(user_id, user_message)
+            except Exception as e:
+                logger.error(f"Yandex GPT service error: {e}")
+                return "Извините, сервис консультаций временно недоступен. Попробуйте позже."
         elif self.use_ollama:
             return await self._ollama_request(user_id, user_message)
         else:
-            return "Извините, сервис AI временно недоступен."
+            logger.error("No AI provider configured properly")
+            return "Извините, сервис AI не настроен. Обратитесь к администратору."
     
     async def _ollama_request(self, user_id: int, user_message: str) -> str:
         """Резервный вариант с Ollama (если нужен)"""
@@ -31,7 +39,7 @@ class LLMService:
         
         try:
             # Простая заглушка - в реальности здесь будет запрос к Ollama
-            response = "Это ответ от локальной модели Ollama. Для работы с Yandex GPT настройте YANDEX_API_KEY."
+            response = "Это ответ от локальной модели Ollama. Для работы с Yandex GPT настройте YANDEX_API_KEY и YANDEX_FOLDER_ID."
             
             # Сохраняем ответ
             ChatHistoryCRUD.add_message(user_id, "assistant", response)
