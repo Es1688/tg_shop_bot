@@ -1,8 +1,8 @@
 import aiohttp
 import json
 import logging
-from app.config import config
-from app.database.crud import ChatHistoryCRUD
+from config import config
+from database.crud import ChatHistoryCRUD
 
 logger = logging.getLogger(__name__)
 
