@@ -4,9 +4,9 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.client.default import DefaultBotProperties
 
-from config import config
-from database.crud import UserCRUD, OrderCRUD
-from services.llm_service import llm_service
+from app.config import config
+from app.database.crud import UserCRUD, OrderCRUD
+from app.services.llm_service import llm_service
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)

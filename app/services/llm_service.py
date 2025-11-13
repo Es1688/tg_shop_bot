@@ -1,7 +1,7 @@
 import logging
-from config import config
-from database.crud import ChatHistoryCRUD
-from services.yandex_gpt_service import yandex_gpt_service
+from app.config import config
+from app.database.crud import ChatHistoryCRUD
+from app.services.yandex_gpt_service import yandex_gpt_service
 
 logger = logging.getLogger(__name__)
 
